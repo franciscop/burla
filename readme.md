@@ -1,4 +1,5 @@
-#  bURLa
+#  bURLa [![npm install burla](https://img.shields.io/badge/npm%20install-burla-blue.svg)](https://www.npmjs.com/package/burla) [![gzip size](https://img.badgesize.io/franciscop/burla/master/index.min.js.svg?compression=gzip)](https://github.com/franciscop/burla/blob/master/index.min.js)
+
 
 Sensible URL manipulation library using the History API. Examples:
 
