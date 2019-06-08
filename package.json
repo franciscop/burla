@@ -1,0 +1,50 @@
+{
+  "name": "burla",
+  "version": "0.1.0",
+  "description": "URL manipulation library",
+  "main": "index.min.js",
+  "scripts": {
+    "build": "rollup index.js --name burla --output.format umd | uglifyjs -o index.min.js",
+    "test": "jest --coverage",
+    "size": "echo \"$(gzip -c index.min.js | wc -c) bytes\" # Only for Unix",
+    "watch": "jest --watch"
+  },
+  "keywords": [
+    "url",
+    "manipulation",
+    "history",
+    "library",
+    "redirect",
+    "replace",
+    "browser",
+    "js"
+  ],
+  "author": "Francisco Presencia <public@francisco.io> (https://francisco.io/)",
+  "license": "MIT",
+  "files": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/franciscop/burla"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "babel-jest": "^24.8.0",
+    "jest": "^24.8.0",
+    "rollup": "^1.11.3",
+    "uglify-es": "^3.3.9"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ]
+  }
+}
