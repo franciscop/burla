@@ -76,6 +76,11 @@ export const URL = (loc = window.location, { stable = true } = {}) => {
     toString,
     query: new Proxy(retrieve().query, {
       get: (orig, key) => retrieve().query[key],
+      set: (orig, key, value) => {
+        const query = retrieve().query;
+        update({ query: { ...query, [key]: value } });
+        return true;
+      },
       deleteProperty: (orig, key) => {
         const { [key]: abc, ...query } = retrieve().query;
         update({ query });
