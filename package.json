@@ -5,8 +5,9 @@
   "main": "index.min.js",
   "scripts": {
     "build": "rollup index.js --name burla --output.format umd | uglifyjs -o index.min.js",
-    "test": "jest --coverage",
     "size": "echo \"$(gzip -c index.min.js | wc -c) bytes\" # Only for Unix",
+    "start": "jest --coverage --watch",
+    "test": "jest --coverage",
     "watch": "jest --watch"
   },
   "keywords": [

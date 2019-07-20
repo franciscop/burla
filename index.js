@@ -26,18 +26,16 @@ export const URL = (loc = window.location, { stable = true } = {}) => {
   const enc = encodeURIComponent;
 
   const toString = ({ path, query, hash }) => {
-    if (typeof query !== "string") {
-      query = Object.entries(query)
-        // Make it stable
-        .sort(([a], [b]) => {
-          if (!stable) return 0;
-          if (a < b) return -1;
-          if (a > b) return 1;
-          return 0;
-        })
-        .map(([key, value]) => `${enc(key)}=${enc(value)}`)
-        .join("&");
-    }
+    query = Object.entries(query)
+      // Make it stable
+      .sort(([a], [b]) => {
+        if (!stable) return 0;
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+      })
+      .map(([key, value]) => `${enc(key)}=${enc(value)}`)
+      .join("&");
     query = query ? `?${query.replace(/^\?/, "")}` : "";
     hash = hash ? `#${hash.replace(/^#/, "")}` : "";
     return loc.origin + path + query + hash;
@@ -73,7 +71,15 @@ export const URL = (loc = window.location, { stable = true } = {}) => {
     get href() {
       return toString(retrieve());
     },
-    toString,
+    get hash() {
+      return retrieve().hash;
+    },
+    set hash(hash) {
+      update({ hash });
+    },
+    toString: () => {
+      return toString(retrieve());
+    },
     query: new Proxy(retrieve().query, {
       get: (orig, key) => retrieve().query[key],
       set: (orig, key, value) => {
