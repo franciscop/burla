@@ -102,6 +102,18 @@ describe("burla.query", () => {
     delete burla.query.hello;
     expect(burla.href).toBe("http://localhost/");
   });
+
+  it("does not accept arrays in queries", () => {
+    expect(() => {
+      burla.URL("http://localhost/?a[]=b");
+    }).toThrow();
+  });
+
+  it("does not accept duplicated keys in queries", () => {
+    expect(() => {
+      burla.URL("http://localhost/?a=b&c=d&a=e");
+    }).toThrow();
+  });
 });
 
 describe("burla.hash", () => {

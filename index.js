@@ -11,13 +11,12 @@ export const URL = (loc = window.location, { stable = true } = {}) => {
     // It *is* already parsed for some reason :shrug:
     for (const [key, value] of params.entries()) {
       if (/\[\]$/.test(key)) {
-        console.error("Arrays in URL are not supported");
-      } else {
-        if (query[key]) {
-          console.warn(`The URL query param '${key}' is duplicated`);
-        }
-        query[key] = value;
+        throw new Error("Arrays in queries are not supported");
       }
+      if (query[key]) {
+        throw new Error(`The URL query param '${key}' is duplicated`);
+      }
+      query[key] = value;
     }
     const hash = (loc.hash || "").replace(/^#/, "");
     return { path, query, hash };
@@ -47,11 +46,6 @@ export const URL = (loc = window.location, { stable = true } = {}) => {
       window.history.pushState({ url }, null, url);
     }
   };
-
-  // Sort the query params
-  if (toString(retrieve()) !== loc.href) {
-    update();
-  }
 
   return {
     URL,
