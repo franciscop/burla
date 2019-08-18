@@ -1,6 +1,6 @@
 #  burla [![npm install burla](https://img.shields.io/badge/npm%20install-burla-blue.svg)](https://www.npmjs.com/package/burla) [![gzip size](https://img.badgesize.io/franciscop/burla/master/index.min.js.svg?compression=gzip)](https://github.com/franciscop/burla/blob/master/index.min.js)
 
-URL manipulation library using the History API to avoid refreshing the browser. Perfect for React, Vue.js, etc:
+URL manipulation library using the History API to avoid refreshing the browser:
 
 ```js
 // Path - redirect to the url without refresh
@@ -107,7 +107,7 @@ const code = url.query.code;
 
 ### `.hash`
 
-Modify the hash 
+Modify the hash
 
 
 ## Manipulate local URLs
