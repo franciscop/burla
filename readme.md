@@ -3,16 +3,16 @@
 URL manipulation library using the History API to avoid refreshing the browser:
 
 ```js
-// Path - redirect to the url without refresh
 // https://example.com/users
 import url from 'burla';
 
-url.path = '/hello/world';
+url.path = '/hello/world'; // No refresh here
 // https://example.com/hello/world
 ```
 
+Can change queries easily even when there's already a search query:
+
 ```js
-// Query - change query strings independently
 // https://example.com/?language=es
 import url from 'burla';
 

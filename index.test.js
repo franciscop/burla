@@ -53,6 +53,22 @@ describe("burla.path", () => {
     replace("/");
     expect(burla.path).toBe("/");
   });
+
+  it("can delete the path to reset it", () => {
+    expect(burla.path).toBe("/");
+    burla.path = "/hello/world";
+    expect(burla.path).toBe("/hello/world");
+    delete burla.path;
+    expect(burla.path).toBe("/");
+  });
+
+  it("can delete the pathname to reset it", () => {
+    expect(burla.path).toBe("/");
+    burla.path = "/hello/world";
+    expect(burla.path).toBe("/hello/world");
+    delete burla.pathname;
+    expect(burla.path).toBe("/");
+  });
 });
 
 describe("burla.query", () => {
@@ -80,6 +96,14 @@ describe("burla.query", () => {
     burla.query({ hello: "world" });
     expect(burla.href).toBe("http://localhost/?hello=world");
     delete burla.query.hello;
+    expect(burla.href).toBe("http://localhost/");
+  });
+
+  it("can delete the whole query to reset it", () => {
+    expect(burla.href).toBe("http://localhost/");
+    burla.query({ hello: "world" });
+    expect(burla.href).toBe("http://localhost/?hello=world");
+    delete burla.query;
     expect(burla.href).toBe("http://localhost/");
   });
 
@@ -196,7 +220,7 @@ describe("burla.hash", () => {
     expect(burla.href).toBe("http://localhost/");
   });
 
-  it.skip("can be deleted", () => {
+  it("can be deleted", () => {
     expect(burla.href).toBe("http://localhost/");
     expect(burla.hash).toBe("");
     burla.hash = "hello";

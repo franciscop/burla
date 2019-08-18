@@ -53,51 +53,67 @@ export const URL = (loc = window.location, { stable = true } = {}) => {
     }
   };
 
-  return {
-    URL,
-    get path() {
-      return retrieve().path;
-    },
-    set path(path) {
-      update({ path });
-    },
-    // Alias to allow for the more familiar `.pathname`
-    get pathname() {
-      return retrieve().path;
-    },
-    set pathname(path) {
-      update({ path });
-    },
-    get href() {
-      return toString(retrieve());
-    },
-    get hash() {
-      return retrieve().hash;
-    },
-    set hash(hash) {
-      update({ hash });
-    },
-    toString: () => {
-      return toString(retrieve());
-    },
-    query: new Proxy(retrieve().query, {
-      get: (orig, key) => retrieve().query[key],
-      set: (orig, key, value) => {
-        const query = retrieve().query;
-        query({ ...query, [key]: value });
-        return true;
-        // retrieve().query({});
-        // const query = retrieve().query;
-        // update({ query: { ...query, [key]: value } });
-        // return true;
+  return new Proxy(
+    {
+      URL,
+      get path() {
+        return retrieve().path;
       },
+      set path(path) {
+        update({ path });
+      },
+      // Alias to allow for the more familiar `.pathname`
+      get pathname() {
+        return retrieve().path;
+      },
+      set pathname(path) {
+        update({ path });
+      },
+      get href() {
+        return toString(retrieve());
+      },
+      get hash() {
+        return retrieve().hash;
+      },
+      set hash(hash) {
+        update({ hash });
+      },
+      toString: () => {
+        return toString(retrieve());
+      },
+      query: new Proxy(retrieve().query, {
+        get: (orig, key) => retrieve().query[key],
+        set: (orig, key, value) => {
+          const query = retrieve().query;
+          query({ ...query, [key]: value });
+          return true;
+          // retrieve().query({});
+          // const query = retrieve().query;
+          // update({ query: { ...query, [key]: value } });
+          // return true;
+        },
+        deleteProperty: (orig, key) => {
+          const { [key]: abc, ...query } = retrieve().query;
+          update({ query });
+          return true;
+        }
+      })
+    },
+    {
       deleteProperty: (orig, key) => {
-        const { [key]: abc, ...query } = retrieve().query;
-        update({ query });
+        if (key === "hash") {
+          update({ hash: "" });
+        }
+        if (key === "query") {
+          update({ query: {} });
+        }
+        if (key === "path" || key === "pathname") {
+          update({ path: "/" });
+        }
         return true;
       }
-    })
-  };
+    }
+  );
 };
 
 export default URL(window.location);
