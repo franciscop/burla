@@ -7,7 +7,13 @@ export const URL = (loc = window.location, { stable = true } = {}) => {
   const retrieve = () => {
     const path = loc.pathname || "/";
     const params = new URLSearchParams(loc.search.slice(1));
-    const query = {};
+    const query = obj => {
+      const params = retrieve().query;
+      if (typeof obj === "function") {
+        obj = obj({ ...params });
+      }
+      update({ query: { ...params, ...obj } });
+    };
     // It *is* already parsed for some reason :shrug:
     for (const [key, value] of params.entries()) {
       if (/\[\]$/.test(key)) {
@@ -78,8 +84,12 @@ export const URL = (loc = window.location, { stable = true } = {}) => {
       get: (orig, key) => retrieve().query[key],
       set: (orig, key, value) => {
         const query = retrieve().query;
-        update({ query: { ...query, [key]: value } });
+        query({ ...query, [key]: value });
         return true;
+        // retrieve().query({});
+        // const query = retrieve().query;
+        // update({ query: { ...query, [key]: value } });
+        // return true;
       },
       deleteProperty: (orig, key) => {
         const { [key]: abc, ...query } = retrieve().query;

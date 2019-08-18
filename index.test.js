@@ -75,6 +75,62 @@ describe("burla.query", () => {
     expect(burla.href).toBe("http://localhost/");
   });
 
+  it("can set a query parameter with an object", () => {
+    expect(burla.href).toBe("http://localhost/");
+    burla.query({ hello: "world" });
+    expect(burla.href).toBe("http://localhost/?hello=world");
+    delete burla.query.hello;
+    expect(burla.href).toBe("http://localhost/");
+  });
+
+  it("can set a query parameter with an object twice", () => {
+    expect(burla.href).toBe("http://localhost/");
+    burla.query({ hello: "world" });
+    expect(burla.href).toBe("http://localhost/?hello=world");
+    burla.query({ hello: "sekai" });
+    expect(burla.href).toBe("http://localhost/?hello=sekai");
+    delete burla.query.hello;
+    expect(burla.href).toBe("http://localhost/");
+  });
+
+  it("can set a query parameter with a function", () => {
+    burla.query.code = 123;
+    expect(burla.href).toBe("http://localhost/?code=123");
+    burla.query(prev => ({ ...prev, hello: "world" }));
+    expect(burla.href).toBe("http://localhost/?code=123&hello=world");
+    burla.query(prev => ({ ...prev, code: 345 }));
+    expect(burla.href).toBe("http://localhost/?code=345&hello=world");
+    delete burla.query.code;
+    delete burla.query.hello;
+    expect(burla.href).toBe("http://localhost/");
+  });
+
+  it("can set a query parameter with a function twice", () => {
+    expect(burla.href).toBe("http://localhost/");
+    burla.query({ hello: "world" });
+    expect(burla.href).toBe("http://localhost/?hello=world");
+    burla.query({ hello: "sekai" });
+    expect(burla.href).toBe("http://localhost/?hello=sekai");
+    delete burla.query.hello;
+    expect(burla.href).toBe("http://localhost/");
+  });
+
+  it("escapes characters", () => {
+    expect(burla.href).toBe("http://localhost/");
+    burla.query.hello = "wo/ld";
+    expect(burla.href).toBe("http://localhost/?hello=wo%2Fld");
+    delete burla.query.hello;
+    expect(burla.href).toBe("http://localhost/");
+  });
+
+  it("escapes characters with the function", () => {
+    expect(burla.href).toBe("http://localhost/");
+    burla.query({ hello: "wo/ld" });
+    expect(burla.href).toBe("http://localhost/?hello=wo%2Fld");
+    delete burla.query.hello;
+    expect(burla.href).toBe("http://localhost/");
+  });
+
   it("can read the parameter set with `pushState(...)`", () => {
     expect(burla.query.hello).toBe(undefined);
     push("/?hello=world");
@@ -121,8 +177,38 @@ describe("burla.hash", () => {
     expect(burla.hash).toBe("");
   });
 
-  it("is empty by default", () => {
+  it("can be modified", () => {
+    expect(burla.href).toBe("http://localhost/");
     expect(burla.hash).toBe("");
+    burla.hash = "hello";
+    expect(burla.href).toBe("http://localhost/#hello");
+    burla.hash = "";
+    expect(burla.href).toBe("http://localhost/");
+  });
+
+  it("will not duplicate the beginning hashtag", () => {
+    expect(burla.href).toBe("http://localhost/");
+    expect(burla.hash).toBe("");
+    burla.hash = "#hello";
+    console.log(burla.href);
+    expect(burla.href).toBe("http://localhost/#hello");
+    burla.hash = "";
+    expect(burla.href).toBe("http://localhost/");
+  });
+
+  it.skip("can be deleted", () => {
+    expect(burla.href).toBe("http://localhost/");
+    expect(burla.hash).toBe("");
+    burla.hash = "hello";
+    expect(burla.href).toBe("http://localhost/#hello");
+    delete burla.hash;
+    expect(burla.href).toBe("http://localhost/");
+  });
+
+  it("can be modified", () => {
+    expect(burla.hash).toBe("");
+    burla.hash = "hello";
+    expect(burla.href).toBe("http://localhost/#hello");
   });
 });
 
