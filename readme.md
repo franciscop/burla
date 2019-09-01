@@ -29,6 +29,7 @@ delete url.query.language;
 The default export will manipulate the `window.location`, effectively changing the current browser URL and adding a new page to the history. You can also [manipulate url strings without changing the browser](#manipulate-local-urls).
 
 
+
 ## API
 
 ### `.path` (or `.pathname`)
@@ -81,33 +82,35 @@ console.log(typeof url.query.logged);
 
 They are always casted to strings and url entities are escapped, as standard with search strings.
 
-If you want to modify several parameters at once without triggering different history events, you can call `.query({ ... })` with the parameters. This function takes **all** the new parameters, ignoring previous ones:
+If you want to modify several parameters at once without triggering different history events, you can call `.query = { ... }` with the parameters. This will accept **all** the new parameters, ignoring previous ones:
 
 ```js
-// https://example.com/?code=123
+// https://example.com/?code=a1b2
 import url from 'burla';
 
 // To maintain the previous parameters with the function, add them manually:
-url.query({ ...url.query, logged: true });
-// https://example.com/?code=123&logged=true
+url.query = { ...url.query, user: 'franciscop' };
+// https://example.com/?code=a1b2&user=franciscop
 
 // Otherwise the previous parameters will be removed:
-url.query({ logged: true });
+url.query = { logged: true };
 // https://example.com/?logged=true
 ```
 
-To keep the previous parameters you can expand it:
-
-```js
-// https://example.com/?code=123
-const code = url.query.code;
-// ...
-```
 
 
 ### `.hash`
 
-Modify the hash
+Read the hash (without the `#` symbol) and modify it:
+
+```js
+// https://example.com/#better-section
+import url from 'burla';
+
+url.hash = 'abc';
+// https://example.com/#abc
+```
+
 
 
 ## Manipulate local URLs
@@ -117,6 +120,7 @@ But you can create and manipulate URLs without affecting the `window.location`:
 ```js
 import burla from 'burla';
 
+// Create a new url that is detached from `window.location`:
 const url = burla.URL('https://example.com/');
 url.query.code = '123456';  // <- no redirects
 console.log(url.href);
