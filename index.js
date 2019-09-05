@@ -85,7 +85,9 @@ export const URL = (location = window.location, { stable = true } = {}) => {
     return update({ [key]: defaults[key] }, location);
   };
 
-  return new Proxy({ URL }, { get, set, deleteProperty });
+  // LOL, this is for `burla.URL()`
+  URL.URL = URL;
+  return new Proxy(URL, { get, set, deleteProperty });
 };
 
 // By default control the global window.location
