@@ -1,6 +1,6 @@
-#  burla [![npm install burla](https://img.shields.io/badge/npm%20install-burla-blue.svg)](https://www.npmjs.com/package/burla) [![gzip size](https://img.badgesize.io/franciscop/burla/master/index.min.js.svg?compression=gzip)](https://github.com/franciscop/burla/blob/master/index.min.js)
+# burla - better url absttraction [![npm install burla](https://img.shields.io/badge/npm%20install-burla-blue.svg)](https://www.npmjs.com/package/burla) [![gzip size](https://img.badgesize.io/franciscop/burla/master/index.min.js.svg?compression=gzip)](https://github.com/franciscop/burla/blob/master/index.min.js)
 
-URL manipulation library using the History API to avoid refreshing the browser:
+A URL manipulation library using the History API:
 
 ```js
 // https://example.com/users
@@ -16,14 +16,14 @@ Can change queries easily even when there's already a search query:
 // https://example.com/?language=es
 import url from 'burla';
 
-url.query.text = 'burla';
-// https://example.com/?language=es&text=burla
+url.query.text = 'hello';
+// https://example.com/?language=es&text=hello
 
 url.query.language = 'en';
-// https://example.com/?language=en&text=burla
+// https://example.com/?language=en&text=hello
 
 delete url.query.language;
-// https://example.com/?text=burla
+// https://example.com/?text=hello
 ```
 
 The default export will manipulate the `window.location`, effectively changing the current browser URL and adding a new page to the history. You can also [manipulate url strings without changing the browser](#manipulate-local-urls).
