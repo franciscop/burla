@@ -16,12 +16,15 @@ Can change queries easily even when there's already a search query:
 // https://example.com/?language=es
 import url from 'burla';
 
+// Change a single query while maintaining the rest:
 url.query.text = 'hello';
 // https://example.com/?language=es&text=hello
 
-url.query.language = 'en';
-// https://example.com/?language=en&text=hello
+// Works with query arrays:
+url.query.language = ['en', 'es'];
+// https://example.com/?language[]=en&language[]=es&text=hello
 
+// Remove a single query:
 delete url.query.language;
 // https://example.com/?text=hello
 ```

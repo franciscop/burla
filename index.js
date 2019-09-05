@@ -14,7 +14,12 @@ const toString = ({ origin, path, query, hash }) => {
       // Cannot happen since keys cannot be repeated (for now)
       // return 0;
     })
-    .map(([key, value]) => `${enc(key)}=${enc(value)}`)
+    .map(([key, value]) => {
+      if (Array.isArray(value)) {
+        return value.map(val => `${enc(key)}[]=${enc(val)}`).join("&");
+      }
+      return `${enc(key)}=${enc(value)}`;
+    })
     .join("&");
   query = query ? `?${query.replace(/^\?/, "")}` : "";
   hash = hash ? `#${hash.replace(/^#/, "")}` : "";

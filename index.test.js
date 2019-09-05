@@ -147,9 +147,14 @@ describe("burla.query", () => {
     expect(burla.href).toBe("http://localhost/?hello=world");
   });
 
-  it("defaults to arrays in queries", () => {
+  it("can read arrays in queries", () => {
     replace("/?a[]=b&a[]=c");
     expect(burla.query.a).toEqual(["b", "c"]);
+  });
+
+  it("can set arrays in queries", () => {
+    burla.query.a = ["b", "c"];
+    expect(burla.href).toEqual("http://localhost/?a[]=b&a[]=c");
   });
 });
 
