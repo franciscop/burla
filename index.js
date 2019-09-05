@@ -1,3 +1,5 @@
+import parse from "./parse";
+
 const enc = encodeURIComponent;
 
 // For resetting anything
@@ -6,7 +8,6 @@ const defaults = { hash: "", path: "/", query: {} };
 // Generate the plain string (href) from the parameters
 const toString = ({ origin, path, query, hash }) => {
   query = Object.entries(query)
-    // Make it stable
     .sort(([a], [b]) => {
       if (a < b) return -1;
       if (a > b) return 1;
@@ -20,28 +21,26 @@ const toString = ({ origin, path, query, hash }) => {
   return origin + path + query + hash;
 };
 
-const retrieve = (location, update) => {
+const retrieve = (location, update, options) => {
   const path = location.pathname;
-  const search = new URLSearchParams(location.search.slice(1));
+
   const params = {};
-  // It *is* already parsed for some reason :shrug:
+  const parser = parse(options);
+
+  const search = new URLSearchParams(location.search.slice(1));
   for (const [key, value] of search.entries()) {
-    if (/\[\]$/.test(key)) {
-      throw new Error("Arrays in queries are not supported");
-    }
-    if (params[key]) {
-      throw new Error(`The URL query param '${key}' is duplicated`);
-    }
-    params[key] = value;
+    parser(key, value, params);
   }
+
+  // It *is* already parsed for some reason :shrug:
   const query = new Proxy(params, {
     get: (orig, key) => params[key],
     set: (orig, key, value) => {
-      return update({ query: { ...params, [key]: value } }, location);
+      return update({ query: { ...params, [key]: value } }, location, options);
     },
     deleteProperty: (orig, key) => {
       const { [key]: abc, ...query } = params;
-      return update({ query: query }, location);
+      return update({ query: query }, location, options);
     }
   });
   const hash = (location.hash || "").replace(/^#/, "");
@@ -50,8 +49,8 @@ const retrieve = (location, update) => {
   return { href, origin, path, query, hash };
 };
 
-const update = (data, location) => {
-  const url = toString({ ...retrieve(location, update), ...data });
+const update = (data, location, options) => {
+  const url = toString({ ...retrieve(location, update, options), ...data });
   if (location === window.location) {
     window.history.pushState({ url }, null, url);
   } else {
@@ -60,29 +59,32 @@ const update = (data, location) => {
   return true;
 };
 
-export const URL = (location = window.location, { stable = true } = {}) => {
+export const URL = (
+  location = window.location,
+  options = { arrayFormat: "bracket" }
+) => {
   // We also accept a partial object
   if (typeof location === "string") {
     location = new window.URL(location);
   }
 
   // This will check whether the query is valid or not
-  toString(retrieve(location, update));
+  toString(retrieve(location, update, options));
 
   const get = (orig, key) => {
     if (orig[key]) return orig[key];
     if (key === "pathname") key = "path";
-    return retrieve(location, update)[key];
+    return retrieve(location, update, options)[key];
   };
 
   const set = (orig, key, value) => {
     if (key === "pathname") key = "path";
-    return update({ [key]: value }, location);
+    return update({ [key]: value }, location, options);
   };
 
   const deleteProperty = (orig, key) => {
     if (key === "pathname") key = "path";
-    return update({ [key]: defaults[key] }, location);
+    return update({ [key]: defaults[key] }, location, options);
   };
 
   // LOL, this is for `burla.URL()`

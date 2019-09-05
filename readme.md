@@ -113,15 +113,24 @@ url.hash = 'abc';
 
 
 
-## Manipulate local URLs
+### URL()
 
-But you can create and manipulate URLs without affecting the `window.location`:
+This can be imported in two ways:
+
+```js
+import burla, { URL } from 'burla';
+
+console.log(burla.URL('http://localhost/'));  // Method 1
+console.log(URL('http://localhost/'));  // Method 2
+```
+
+You can create and manipulate URLs without affecting the `window.location`:
 
 ```js
 import burla from 'burla';
 
 // Create a new url that is detached from `window.location`:
-const url = burla.URL('https://example.com/');
+const url = URL('https://example.com/');
 url.query.code = '123456';  // <- no redirects
 console.log(url.href);
 // https://example.com/?code=123456
