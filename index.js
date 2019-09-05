@@ -8,13 +8,9 @@ const defaults = { hash: "", path: "/", query: {} };
 // Generate the plain string (href) from the parameters
 const toString = ({ origin, path, query, hash }) => {
   query = Object.entries(query)
-    .sort(([a], [b]) => {
-      if (a < b) return -1;
-      if (a > b) return 1;
-      // Cannot happen since keys cannot be repeated (for now)
-      // return 0;
-    })
+    .sort(([a], [b]) => (a < b ? -1 : 1)) // Keys cant repeat in objects so a!=b
     .map(([key, value]) => {
+      // For arrays in the URL
       if (Array.isArray(value)) {
         return value.map(val => `${enc(key)}[]=${enc(val)}`).join("&");
       }

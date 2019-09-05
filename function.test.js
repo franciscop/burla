@@ -1,12 +1,12 @@
-import burla, { URL } from "./index";
+import burla from "./index";
 
 const replace = url => window.history.replaceState(null, null, url);
 const push = url => window.history.pushState(null, null, url);
 
-describe("URL()", () => {
+describe("burla()", () => {
   let url;
   beforeEach(() => {
-    url = URL("http://localhost/");
+    url = burla("http://localhost/");
   });
   afterEach(() => {
     burla.path = "/";
@@ -18,59 +18,41 @@ describe("URL()", () => {
     expect(url.href).toBe("http://localhost/");
   });
 
-  it("is the same as burla.URL", () => {
-    expect(URL).toBe(burla.URL);
-  });
+  describe("burla()", () => {
+    it("defaults to window.location", () => {
+      const url = burla();
+      expect(url.path).toBe("/");
+      expect(url.pathname).toBe("/");
+      expect(burla.path).toBe("/");
+      expect(window.location.pathname).toBe("/");
+      replace("/users");
+      expect(url.path).toBe("/users");
+      expect(url.pathname).toBe("/users");
+      expect(burla.path).toBe("/users");
+      expect(window.location.pathname).toBe("/users");
+      replace("/");
+      expect(url.path).toBe("/");
+      expect(url.pathname).toBe("/");
+      expect(burla.path).toBe("/");
+      expect(window.location.pathname).toBe("/");
+    });
 
-  it("defaults to window.location", () => {
-    const url = URL();
-    expect(url.path).toBe("/");
-    expect(url.pathname).toBe("/");
-    expect(burla.path).toBe("/");
-    expect(window.location.pathname).toBe("/");
-    replace("/users");
-    expect(url.path).toBe("/users");
-    expect(url.pathname).toBe("/users");
-    expect(burla.path).toBe("/users");
-    expect(window.location.pathname).toBe("/users");
-    replace("/");
-    expect(url.path).toBe("/");
-    expect(url.pathname).toBe("/");
-    expect(burla.path).toBe("/");
-    expect(window.location.pathname).toBe("/");
-  });
+    it("can read a path", () => {
+      const url = burla("http://localhost/users?hello=world");
+      expect(url.path).toBe("/users");
+      expect(url.query.hello).toBe("world");
+      expect(burla.path).toBe("/");
+      expect(window.location.pathname).toBe("/");
+    });
 
-  it("can read a path", () => {
-    const url = URL("http://localhost/users?hello=world");
-    expect(url.path).toBe("/users");
-    expect(url.query.hello).toBe("world");
-    expect(burla.path).toBe("/");
-    expect(window.location.pathname).toBe("/");
-  });
-
-  it("is stable by default", () => {
-    const url = URL("http://localhost/users?c=d&a=b");
-    expect(url.href).toBe("http://localhost/users?a=b&c=d");
+    it("is stable by default", () => {
+      const url = burla("http://localhost/users?c=d&a=b");
+      expect(url.href).toBe("http://localhost/users?a=b&c=d");
+    });
   });
 
   describe("URL().path", () => {
-    let url;
-    beforeEach(() => {
-      url = URL("http://localhost/");
-    });
-    afterEach(() => {
-      burla.path = "/";
-      burla.query = {};
-      burla.hash = "";
-      url.path = "/";
-      url.query = {};
-      url.hash = "";
-      expect(url.href).toBe("http://localhost/");
-    });
-
     it("does not follow the global path", () => {
-      expect(url.href).toBe("http://localhost/");
-      expect(burla.href).toBe("http://localhost/");
       burla.path = "/hello";
       expect(url.href).toBe("http://localhost/");
       expect(burla.href).toBe("http://localhost/hello");
@@ -120,14 +102,9 @@ describe("URL()", () => {
 
   describe("burla.URL().query", () => {
     it("does not follow the global query", () => {
-      expect(url.href).toBe("http://localhost/");
-      expect(burla.href).toBe("http://localhost/");
       replace("/?a=b&e=f&c=d");
       expect(url.href).toBe("http://localhost/");
       expect(burla.href).toBe("http://localhost/?a=b&c=d&e=f");
-      replace("/");
-      expect(url.href).toBe("http://localhost/");
-      expect(burla.href).toBe("http://localhost/");
     });
 
     it("can set a query parameter", () => {
@@ -143,8 +120,6 @@ describe("URL()", () => {
     it("can delete the whole query to reset it", () => {
       url.query = { hello: "world" };
       expect(url.href).toBe("http://localhost/?hello=world");
-      delete url.query;
-      expect(url.href).toBe("http://localhost/");
     });
 
     it("can extend a query", () => {
@@ -193,62 +168,83 @@ describe("URL()", () => {
     });
 
     it("accepts arrays in queries", () => {
-      expect(URL("http://localhost/?a[]=b").query.a).toEqual(["b"]);
+      expect(burla("http://localhost/?a[]=b").query.a).toEqual(["b"]);
     });
 
     it("will overwrite previous keys by default", () => {
-      expect(URL("http://localhost/?a=b&c=d&a=e").query.a).toBe("e");
+      expect(burla("http://localhost/?a=b&c=d&a=e").query.a).toBe("e");
     });
 
-    it("accepts duplicated keys in queries", () => {
+    it("can parse them with options", () => {
       expect(
-        URL("http://localhost/?a=b&a=c", { arrayFormat: "none" }).query.a
+        burla("http://localhost/?a=b&a=c", { arrayFormat: "none" }).query.a
       ).toEqual(["b", "c"]);
       expect(
-        URL("http://localhost/?a[]=b&a[]=c", { arrayFormat: "bracket" }).query.a
+        burla("http://localhost/?a[]=b&a[]=c", { arrayFormat: "bracket" }).query
+          .a
       ).toEqual(["b", "c"]);
       expect(
-        URL("http://localhost/?a[1]=b&a[2]=c", { arrayFormat: "index" }).query.a
+        burla("http://localhost/?a[1]=b&a[2]=c", { arrayFormat: "index" }).query
+          .a
       ).toEqual({ 1: "b", 2: "c" });
       expect(
-        URL("http://localhost/?a=b,c", { arrayFormat: "comma" }).query.a
+        burla("http://localhost/?a=b,c", { arrayFormat: "comma" }).query.a
       ).toEqual(["b", "c"]);
     });
   });
 
   describe("burla.URL().hash", () => {
-    it("is empty by default", () => {
-      expect(url.href).toBe("http://localhost/");
-      expect(url.hash).toBe("");
+    let url;
+    beforeEach(() => {
+      url = burla("http://localhost/");
     });
 
     it("does not follow the global hash", () => {
+      expect(url.href).toBe("http://localhost/");
+      expect(burla.href).toBe("http://localhost/");
       burla.hash = "hello";
       expect(url.href).toBe("http://localhost/");
       expect(burla.href).toBe("http://localhost/#hello");
-    });
-
-    it("the global hash  does not follow the local one", () => {
-      url.hash = "hello";
-      expect(url.href).toBe("http://localhost/#hello");
+      burla.hash = "";
+      expect(url.href).toBe("http://localhost/");
       expect(burla.href).toBe("http://localhost/");
     });
 
+    it("is empty by default", () => {
+      expect(url.hash).toBe("");
+    });
+
     it("can be modified", () => {
+      expect(url.href).toBe("http://localhost/");
+      expect(url.hash).toBe("");
       url.hash = "hello";
       expect(url.href).toBe("http://localhost/#hello");
+      url.hash = "";
+      expect(url.href).toBe("http://localhost/");
     });
 
     it("will not duplicate the beginning hashtag", () => {
+      expect(url.href).toBe("http://localhost/");
+      expect(url.hash).toBe("");
       url.hash = "#hello";
       expect(url.href).toBe("http://localhost/#hello");
+      url.hash = "";
+      expect(url.href).toBe("http://localhost/");
     });
 
     it("can be deleted", () => {
+      expect(url.href).toBe("http://localhost/");
+      expect(url.hash).toBe("");
       url.hash = "hello";
       expect(url.href).toBe("http://localhost/#hello");
       delete url.hash;
       expect(url.href).toBe("http://localhost/");
+    });
+
+    it("can be modified", () => {
+      expect(url.hash).toBe("");
+      url.hash = "hello";
+      expect(url.href).toBe("http://localhost/#hello");
     });
   });
 });
