@@ -40,7 +40,7 @@ const retrieve = (location, update, options) => {
       return update({ query: { ...params, [key]: value } }, location, options);
     },
     deleteProperty: (orig, key) => {
-      const { [key]: abc, ...query } = params;
+      const { [key]: _, ...query } = params;
       return update({ query: query }, location, options);
     }
   });
