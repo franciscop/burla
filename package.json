@@ -17,35 +17,20 @@
     "js"
   ],
   "scripts": {
-    "build": "rollup index.js --name burla --output.format umd | uglifyjs -o index.min.js",
-    "size": "echo \"$(gzip -c index.min.js | wc -c) bytes\" # Only for Unix",
-    "start": "jest --coverage --watch",
-    "test": "jest --coverage",
-    "watch": "jest --watch",
+    "start": "vitest",
+    "test": "vitest run --coverage",
     "lint": "oxlint index.js parse.js"
   },
-  "main": "index.min.js",
-  "files": [],
-  "dependencies": {},
+  "main": "index.js",
+  "type": "module",
+  "files": [
+    "index.js",
+    "parse.js"
+  ],
   "devDependencies": {
-    "@babel/core": "^7.4.4",
-    "@babel/preset-env": "^7.4.4",
-    "babel-jest": "^24.8.0",
-    "jest": "^24.8.0",
+    "@vitest/coverage-v8": "^5.0.5",
+    "jsdom": "^30.1.3",
     "oxlint": "^1.89.0",
-    "rollup": "^1.11.3",
-    "uglify-es": "^3.3.9"
-  },
-  "babel": {
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "targets": {
-            "node": "current"
-          }
-        }
-      ]
-    ]
+    "vitest": "^5.0.5"
   }
 }

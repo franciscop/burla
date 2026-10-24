@@ -1,4 +1,4 @@
-# burla - better url abstraction [![npm install burla](https://img.shields.io/badge/npm%20install-burla-blue.svg)](https://www.npmjs.com/package/burla) [![tests](https://github.com/franciscop/burla/workflows/tests/badge.svg)](https://github.com/franciscop/burla/actions) [![gzip size](https://img.badgesize.io/franciscop/burla/master/index.min.js.svg?compression=gzip)](https://github.com/franciscop/burla/blob/master/index.min.js)
+# burla - better url abstraction [![npm install burla](https://img.shields.io/badge/npm%20install-burla-blue.svg)](https://www.npmjs.com/package/burla) [![tests](https://github.com/franciscop/burla/workflows/tests/badge.svg)](https://github.com/franciscop/burla/actions) [![gzip size](https://img.badgesize.io/franciscop/burla/master/index.js.svg?compression=gzip)](https://github.com/franciscop/burla/blob/master/index.js)
 
 A URL manipulation library using the History API:
 
